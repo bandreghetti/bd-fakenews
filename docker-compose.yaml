@@ -1,4 +1,4 @@
-version: '2'
+version: "2"
 
 networks:
   postgres:
@@ -7,12 +7,14 @@ networks:
 services:
   postgres:
     image: postgres
+    container_name: postgres_database
     environment:
       POSTGRES_USER: postgres
       POSTGRES_PASSWORD: bd20182
       PGDATA: /data/postgres
     volumes:
-       - /data/postgres:/data/postgres
+      - /data/postgres:/data/postgres
+      - ./initdb:/docker-entrypoint-initdb.d
     ports:
       - "5432:5432"
     networks:
@@ -23,11 +25,12 @@ services:
     links:
       - postgres:postgres
     image: fenglc/pgadmin4
+    container_name: postgres_admin
     environment:
       PGADMIN_DEFAULT_EMAIL: pgadmin4@pgadmin.org
       PGADMIN_DEFAULT_PASSWORD: admin
     volumes:
-       - /data/pgadmin:/root/.pgadmin
+      - /data/pgadmin:/root/.pgadmin
     ports:
       - "5050:5050"
     networks:
