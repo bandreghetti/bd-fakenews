@@ -36,3 +36,21 @@ services:
     networks:
       - postgres
     restart: unless-stopped
+
+  db-api:
+    build:
+      context: ./
+      dockerfile: ./Dockerfile
+    container_name: db-api
+    environment:
+      PG_USER: postgres
+      PG_PASSWORD: bd20182
+    volumes:
+      - ./rest-go:/go/src/rest-go
+    working_dir: /go/src/rest-go
+    command: /bin/bash -c 'go run main.go'
+    ports:
+      - "80:80"
+    networks:
+      - postgres
+    restart: unless-stopped

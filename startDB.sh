@@ -7,5 +7,3 @@ sudo rm -rf /data/postgres
 sudo rm -rf /data/pgadmin
 
 docker-compose up -d
-
-cd rest-go && go run main.go
