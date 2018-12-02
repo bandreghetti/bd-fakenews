@@ -40,7 +40,7 @@ CREATE TABLE t_usuario (
 
 CREATE TABLE t_noticia (
     codigo          SERIAL PRIMARY KEY,
-    manchete        VARCHAR(100),
+    manchete        VARCHAR(200),
     corpo           TEXT,
     submetidaPor    VARCHAR(50) REFERENCES t_usuario(email)
 );
@@ -69,8 +69,8 @@ CREATE TABLE r_candidato_noticia (
 
 CREATE TABLE t_midia (
     md5             BYTEA PRIMARY KEY,
-    arquivo         TEXT,
-    fotoVideo      BOOLEAN,
+    arquivo         BYTEA,
+    fotoVideo       BOOLEAN,
     linkPublicacao  VARCHAR(100) REFERENCES t_publicacao(link),
     codNoticia      SERIAL REFERENCES t_noticia(codigo)
 );
