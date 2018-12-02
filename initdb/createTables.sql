@@ -18,7 +18,7 @@ CREATE TABLE t_partido (
 );
 
 CREATE TABLE r_partido_coligacao (
-    codColigacao SERIAL REFERENCES t_coligacao(codigo),
+    codColigacao INTEGER REFERENCES t_coligacao(codigo),
     siglaPartido VARCHAR(5) REFERENCES t_partido(sigla),
     PRIMARY KEY (codColigacao, siglaPartido)
 );
@@ -48,8 +48,8 @@ CREATE TABLE t_noticia (
 CREATE TABLE t_publicacao (
     link        VARCHAR(100) PRIMARY KEY,
     autor       VARCHAR(50),
-    codVeiculo  SERIAL REFERENCES t_veiculo(codigo),
-    codNoticia  SERIAL REFERENCES t_noticia(codigo)
+    codVeiculo  INTEGER REFERENCES t_veiculo(codigo),
+    codNoticia  INTEGER REFERENCES t_noticia(codigo)
 );
 
 CREATE TABLE t_candidato (
@@ -58,12 +58,12 @@ CREATE TABLE t_candidato (
     dataNascimento  DATE,
     siglaPartido    CHAR(5) REFERENCES t_partido(sigla),
     concorreEm      CHAR(2) REFERENCES t_local(sigla),
-    codCargo        SERIAL REFERENCES t_cargo(codigo)
+    codCargo        INTEGER REFERENCES t_cargo(codigo)
 );
 
 CREATE TABLE r_candidato_noticia (
     cpfCandidato    CHAR(11) REFERENCES t_candidato(cpf),
-    codNoticia      SERIAL REFERENCES t_noticia(codigo),
+    codNoticia      INTEGER REFERENCES t_noticia(codigo),
     PRIMARY KEY (cpfCandidato, codNoticia)
 );
 
@@ -72,5 +72,5 @@ CREATE TABLE t_midia (
     arquivo         BYTEA,
     fotoVideo       BOOLEAN,
     linkPublicacao  VARCHAR(100) REFERENCES t_publicacao(link),
-    codNoticia      SERIAL REFERENCES t_noticia(codigo)
+    codNoticia      INTEGER REFERENCES t_noticia(codigo)
 );
