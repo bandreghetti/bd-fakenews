@@ -50,7 +50,7 @@ services:
     working_dir: /go/src/rest-go
     command: /bin/bash -c 'go run main.go'
     ports:
-      - "80:80"
+      - "80:3000"
     networks:
       - postgres
     restart: unless-stopped

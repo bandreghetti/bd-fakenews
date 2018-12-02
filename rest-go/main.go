@@ -49,7 +49,7 @@ var db *(sql.DB)
 var err error
 
 func main() {
-	connStr := "user=postgres dbname=postgres password=bd20182 host=127.0.0.1 sslmode=disable"
+	connStr := "user=postgres dbname=postgres password=bd20182 host=postgres_database sslmode=disable"
 	db, err = sql.Open("postgres", connStr)
 	if err != nil {
 		log.Fatal(err)
