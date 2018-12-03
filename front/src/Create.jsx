@@ -81,6 +81,13 @@ class CreateFakeNews extends React.Component {
       author: this.state.author,
       codVeiculo: 1
     };
+    submitJSON.media = {
+      file: this.state.file,
+      format: this.state.format,
+      isVideo: false,
+      link: this.state.link
+    };
+    submitJSON.candidates = this.state.candidates;
     console.log(submitJSON);
   };
   render() {

@@ -349,6 +349,7 @@ func createNews(w http.ResponseWriter, r *http.Request) {
 		}
 	}
 	w.WriteHeader(http.StatusOK)
+	w.Write([]byte("ok"))
 }
 
 func appendPubli(w http.ResponseWriter, r *http.Request) {
