@@ -11,6 +11,8 @@ import {
   CardActions,
   Collapse
 } from "@material-ui/core";
+import Select from 'react-select';
+import db_api from './Common/axiosOrderers';
 
 const styles = theme => ({
   root: {
@@ -21,7 +23,6 @@ const styles = theme => ({
     alignItems: "center",
     justifyContent: "center",
     fontSize: "calc(10px + 2vmin)",
-    color: "white"
   },
   title: {
     fontSize: 14
@@ -52,10 +53,20 @@ class CreateFakeNews extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      files: []
+      files: [],
+      vehicles: [{label: '', value: ''}]
     };
   }
-
+  componentWillMount () {
+    db_api.get('/getVehicles')
+      .then(response => {
+        console.log(response.data);
+        this.setState({ vehicles: response.data});
+      })
+      .catch(err => {
+        console.log(err);
+      })
+  }
   handleFileUpload = event => {
     this.setState({ files: event.target.files });
   };
@@ -64,9 +75,21 @@ class CreateFakeNews extends React.Component {
     this.setState({ [field]: event.target.value });
   };
 
+  handleSelect = (selectedOption) => {
+    this.setState({ selectedOption, vehicle: selectedOption.value });
+  }
+
+  getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      var reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = error => reject(error);
+    });
+  }
+
   send = () => {
     let submitJSON = {};
-    console.log(this.state);
     submitJSON.user = {
       email: this.state.email,
       name: this.state.username
@@ -81,16 +104,34 @@ class CreateFakeNews extends React.Component {
       author: this.state.author,
       codVeiculo: 1
     };
-    console.log(submitJSON);
+    if (this.state.files) {
+
+      const media = Object.keys(this.state.files).map(key => {
+        return this.getBase64(this.state.files[key]).then(base64 => {
+          return {
+            isVideo: false,
+            link: this.state.link,
+            file: base64
+          }
+        });
+      }
+      );
+      Promise.all(media).then(medias => {
+        submitJSON.media = {
+          medias
+        }
+        console.log(submitJSON)
+        db_api.post('/submit', submitJSON).catch(err => {console.log(err)})
+      });
+    }
   };
   render() {
     const { classes } = this.props;
-    const { files } = this.state;
+    const { files, selectedOption, vehicles } = this.state;
     const fields = [
       { field: "username", label: "Nome de Usuário" },
       { field: "email", label: "Email" },
       { field: "candidate", label: "Candidato" },
-      { field: "vehicle", label: "Veículo de mídia" },
       { field: "link", label: "Link" },
       { field: "author", label: "Autor" }
     ];
@@ -126,12 +167,19 @@ class CreateFakeNews extends React.Component {
                     />
                   </Grid>
                 ))}
-                <Grid item xs={12}>
-                  <TextField
-                    style={{ width: "97.5%" }}
-                    label="Título"
-                    onChange={event => this.handleChange(event, "title")}
+                <Grid item xs={6} style={{marginTop: '1%', width: '97,5%'}}>
+                  <Select
+                    value={selectedOption}
+                    onChange={this.handleSelect}
+                    options={vehicles}
                   />
+                </Grid>
+                <Grid item xs={12}>
+                <TextField
+                style={{ width: "97.5%" }}
+                label="Título"
+                onChange={event => this.handleChange(event, "title")}
+                />
                 </Grid>
                 <Grid item xs={12}>
                   <TextField
@@ -170,7 +218,7 @@ class CreateFakeNews extends React.Component {
                 Enviar!
               </Button>
             </CardActions>
-          </Card>
+      </Card>
         </Paper>
       </div>
     );

@@ -129,10 +129,12 @@ func deleteNews(w http.ResponseWriter, r *http.Request) {
 		switch err {
 		case sql.ErrNoRows:
 			w.WriteHeader(http.StatusOK)
+			return
 		default:
 			w.WriteHeader(http.StatusInternalServerError)
 			errMsg := fmt.Sprintf("error deleting news: %s", err.Error())
 			w.Write([]byte(errMsg))
+			return
 		}
 	}
 	w.WriteHeader(http.StatusOK)
@@ -276,7 +278,7 @@ type FakeNews struct {
 	User       User     `json:user`
 	New        New      `json:new`
 	Publi      Publi    `json:publi`
-	Media      Media    `json:media`
+	Media      []Media  `json:media`
 	Candidates []string `json:candidates`
 }
 
@@ -326,17 +328,20 @@ func createNews(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	fileArray := fnews.Media.File
-	hasher := md5.New()
-	hasher.Write(fileArray)
-	md5hashed := hex.EncodeToString(hasher.Sum(nil))
-	fnews.Media.MD5 = md5hashed
-	_, err = createMedia(db, fnews.Media)
-	if err != nil {
-		errMsg := fmt.Sprintf("error inserting media tuple: %s", err.Error())
-		w.WriteHeader(http.StatusInternalServerError)
-		w.Write([]byte(errMsg))
-		return
+	fileArray := fnews.Media
+
+	for _, file := range fileArray {
+		hasher := md5.New()
+		hasher.Write(file.File)
+		md5hashed := hex.EncodeToString(hasher.Sum(nil))
+		file.MD5 = md5hashed
+		_, err = createMedia(db, file)
+		if err != nil {
+			errMsg := fmt.Sprintf("error inserting media tuple: %s", err.Error())
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte(errMsg))
+			return
+		}
 	}
 
 	for _, candidate := range fnews.Candidates {
