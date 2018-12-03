@@ -275,11 +275,11 @@ func getAllNews(w http.ResponseWriter, r *http.Request) {
 }
 
 type FakeNews struct {
-	User       User     `json:user`
-	New        New      `json:new`
-	Publi      Publi    `json:publi`
-	Media      []Media  `json:media`
-	Candidates []string `json:candidates`
+	User       User     `json:"user"`
+	New        New      `json:"new"`
+	Publi      Publi    `json:"publi"`
+	Media      []Media  `json:"media"`
+	Candidates []string `json:"candidates"`
 }
 
 func createNews(w http.ResponseWriter, r *http.Request) {
