@@ -1,4 +1,4 @@
-DROP VIEW v_todasnoticias, v_noticia_midia IF EXISTS;
+DROP VIEW IF EXISTS v_todasnoticias, v_noticia_midia, v_partidos_coligacao;
 CREATE VIEW v_todasnoticias AS
     SELECT t_noticia.codigo as codNoticia,
 		   manchete,
@@ -43,3 +43,13 @@ SELECT
 			t_midia.linkpublicacao = t_publicacao.link
 			OR t_midia.codnoticia = t_noticia.codigo
 		);
+
+CREATE VIEW v_partidos_coligacao AS
+SELECT
+	t_partido.sigla as sigla,
+	t_partido.nome as nomePartido,
+	t_coligacao.nome as nomeColigacao,
+	t_coligacao.ehDe as estado
+	FROM t_partido, r_partido_coligacao, t_coligacao
+	WHERE t_partido.sigla = r_partido_coligacao.siglaPartido
+	AND   t_coligacao.codigo = r_partido_coligacao.codColigacao;
