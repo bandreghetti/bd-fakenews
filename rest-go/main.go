@@ -241,7 +241,6 @@ func getAllNews(w http.ResponseWriter, r *http.Request) {
 									nome,
 									concorreem,
 									cargo,
-									coligacao,
 									partido
 								FROM v_todasnoticias`)
 	if err != nil {
@@ -263,7 +262,6 @@ func getAllNews(w http.ResponseWriter, r *http.Request) {
 			&new.Nome,
 			&new.Concorreem,
 			&new.Cargo,
-			&new.Coligacao,
 			&new.Partido); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Could not get row"))
