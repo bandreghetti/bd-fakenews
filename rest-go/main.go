@@ -435,6 +435,7 @@ func createMedia(db *sql.DB, media Media) (string, error) {
 }
 
 func createCandidateNewRelation(db *sql.DB, candiNew CandidateNew) error {
+	fmt.Println(candiNew)
 	createRelation := fmt.Sprintf("INSERT INTO r_candidato_noticia(cpfCandidato, codNoticia) VALUES ('%s', '%d')", candiNew.CPF, candiNew.CodNoticia)
 	err := db.QueryRow(createRelation).Scan(nil)
 	if err != nil {
