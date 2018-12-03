@@ -13,6 +13,7 @@ import (
 
 	"github.com/gorilla/handlers"
 	"github.com/gorilla/mux"
+	"github.com/lib/pq"
 	_ "github.com/lib/pq"
 )
 
@@ -422,11 +423,11 @@ func createMedia(db *sql.DB, media Media) (string, error) {
 	var newMedia string
 	var createMediaForPub string
 	if media.Link != "" {
-		createMediaForPub = fmt.Sprintf("INSERT INTO t_midia(md5, arquivo, fotoVideo, linkPublicacao) VALUES ('%s', '%s', %t, '%s') RETURNING md5", media.MD5, string(media.File[:]), media.IsVideo, media.Link)
+		createMediaForPub = fmt.Sprintf("INSERT INTO t_midia(md5, arquivo, fotoVideo, linkPublicacao) VALUES ('%s', $1, %t, '%s') RETURNING md5", media.MD5, media.IsVideo, media.Link)
 	} else {
-		createMediaForPub = fmt.Sprintf("INSERT INTO t_midia(md5, arquivo, fotoVideo, codNoticia) VALUES ('%s', '%s', %t, %d) RETURNING md5", media.MD5, string(media.File[:]), media.IsVideo, media.CodNoticia)
+		createMediaForPub = fmt.Sprintf("INSERT INTO t_midia(md5, arquivo, fotoVideo, codNoticia) VALUES ('%s', $1, %t, %d) RETURNING md5", media.MD5, media.IsVideo, media.CodNoticia)
 	}
-	err := db.QueryRow(createMediaForPub).Scan(&newMedia)
+	err := db.QueryRow(createMediaForPub, pq.ByteaArray([][]byte{media.File})).Scan(&newMedia)
 	if err != nil {
 		return newMedia, err
 	}
