@@ -27,7 +27,7 @@ class Retrieve extends React.Component {
     getNews = () => {
       db_api.get('/allnews')
         .then((response) => {
-          if(response.data){
+            if(response.data){
             this.setState({ news: response.data})
           }
         })
@@ -56,7 +56,6 @@ class Retrieve extends React.Component {
                 <TableCell>Estado</TableCell>
                 <TableCell>Cargo</TableCell>
                 <TableCell>Partido</TableCell>
-                <TableCell>Coligacao</TableCell>
                 <TableCell> </TableCell>
               </TableRow>
             </TableHead>
@@ -74,7 +73,6 @@ class Retrieve extends React.Component {
                     <TableCell>{row.local}</TableCell>
                     <TableCell>{row.role}</TableCell>
                     <TableCell>{row.party}</TableCell>
-                    <TableCell>{row.coligation}</TableCell>
                     <TableCell>
                       <Grid container style={{display: 'flex', justifyContent: 'flex-start' }}>
                         <Grid item xs={6}>
