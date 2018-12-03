@@ -4,14 +4,15 @@ import Button from '@material-ui/core/Button';
 import { withStyles } from '@material-ui/core';
 
 
-const styles = () => ({
+const styles = (theme) => ({
     button: {
-      paddingTop: '2%',
+      paddingTop: theme.spacing.unit,
+      marginLeft: 2*theme.spacing.unit
     }
 });
 
-const onClick = (history) => {
-  history.push('/create')
+const onClick = (history, func) => {
+  history.push(`/${func}`);
 }
 
 const Root = (props) => (
@@ -23,9 +24,17 @@ const Root = (props) => (
             variant="contained"
             color="secondary"
             className={props.classes.button}
-            onClick={() => onClick(props.history)}
+            onClick={() => onClick(props.history, 'create')}
           >
             Reportar Fake News
+          </Button>
+          <Button
+            variant="contained"
+            color="secondary"
+            className={props.classes.button}
+            onClick={() => onClick(props.history, 'retrieve')}
+          >
+            Ver Fake News
           </Button>
         </div>
     </header>

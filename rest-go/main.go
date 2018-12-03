@@ -4,6 +4,7 @@ import (
 	"crypto/md5"
 	"database/sql"
 	"encoding/hex"
+	"encoding/json"
 	"fmt"
 	"log"
 	"net/http"
@@ -13,6 +14,18 @@ import (
 	"github.com/gorilla/mux"
 	_ "github.com/lib/pq"
 )
+
+type AllNews struct {
+	codNoticia   int    `json:cod`
+	manchete     string `json:headline`
+	submetidapor string `json:submittedBy`
+	cpf          string `json:cpf`
+	nome         string `json:name`
+	concorreem   string `json:local`
+	cargo        string `json:role`
+	coligacao    string `json:coligation`
+	partido      string `json:party`
+}
 
 type User struct {
 	name  string
@@ -58,6 +71,7 @@ func main() {
 	r := mux.NewRouter()
 	// r.HandleFunc("/", handler which will serve the static page)
 	r.HandleFunc("/submit", createNews).Methods("POST")
+	r.HandleFunc("/AllNews", getAllNews).Methods("GET")
 
 	corsConf := handlers.CORS(
 		handlers.AllowedMethods([]string{"GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD"}),
@@ -72,6 +86,46 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getAllNews(w http.ResponseWriter, r *http.Request) {
+	queryStmt, err := db.Prepare(`SELECT
+									codNoticia,
+									manchete,
+									submetidapor,
+									cpf,
+									nome,
+									concorreem,
+									cargo,
+									coligacao,
+									partido
+								FROM v_todasnoticias`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var news []AllNews
+	rows, err := queryStmt.Query()
+	defer rows.Close()
+	for rows.Next() {
+		var new AllNews
+		if err := rows.Scan(
+			&new.codNoticia,
+			&new.manchete,
+			&new.submetidapor,
+			&new.cpf,
+			&new.nome,
+			&new.concorreem,
+			&new.cargo,
+			&new.coligacao,
+			&new.partido); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Could not get row"))
+		}
+		news = append(news, new)
+	}
+	newsJSON, _ := json.Marshal(news)
+	fmt.Println(string(newsJSON))
+	w.Write(newsJSON)
 }
 
 func createNews(w http.ResponseWriter, r *http.Request) {
