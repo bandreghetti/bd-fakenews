@@ -32,7 +32,9 @@ class Retrieve extends React.Component {
         const { news } = this.state;
         return (
           <div className={classes.root}>
-            <Paper>
+            <Paper style={{
+              maxWidth: '98%'
+            }}>
               <Table>
               <TableHead>
               <TableRow>

@@ -28,6 +28,20 @@ type AllNews struct {
 	Partido      string `json:"party"`
 }
 
+type GetNew struct {
+	Cod          int    `json:"cod`
+	Manchete     string `json:"headline"`
+	Corpo        string `json:"body"`
+	Submetidapor string `json:"submittedby"`
+	Link         string `json:"link"`
+	Autor        string `json:"author"`
+	Veiculo      string `json:"vehicle"`
+	FotoVideo    bool   `json:isFoto`
+	File         []byte `json:"file"`
+	MidiaCod     int    `json:"mediaCod"`
+	MidiaLink    string `json:"mediaLink"`
+}
+
 type User struct {
 	Name  string `json:name`
 	Email string `json:email`
@@ -73,6 +87,7 @@ func main() {
 	// r.HandleFunc("/", handler which will serve the static page)
 	r.HandleFunc("/submit", createNews).Methods("POST")
 	r.HandleFunc("/allnews", getAllNews).Methods("GET")
+	r.HandleFunc("/new/{id}", getNew).Methods("GET")
 
 	corsConf := handlers.CORS(
 		handlers.AllowedMethods([]string{"GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD"}),
@@ -89,6 +104,63 @@ func main() {
 	}
 }
 
+func getNew(w http.ResponseWriter, r *http.Request) {
+	queryStmt, err := db.Prepare(`SELECT
+									manchete,
+									corpo,
+									submetidapor,
+									link,
+									autor,
+									veiculo,
+									arquivo,
+									fotovideo,
+									midia_cod,
+									midia_link
+								FROM v_noticia_midia
+								WHERE codigo=$1`)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Wrong Statement"))
+	}
+	defer queryStmt.Close()
+	v := mux.Vars(r)
+	id, ok := v["id"]
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Missing ID"))
+		return
+	}
+	rows, err := queryStmt.Query(id)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error on query"))
+		return
+	}
+	defer rows.Close()
+	var new GetNew
+	for rows.Next() {
+		if err := rows.Scan(
+			&new.Manchete,
+			&new.Corpo,
+			&new.Submetidapor,
+			&new.Link,
+			&new.Autor,
+			&new.Veiculo,
+			&new.File,
+			&new.FotoVideo,
+			&new.MidiaCod,
+			&new.MidiaLink); err != nil {
+			log.Println(err)
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Could not get row"))
+			return
+		}
+	}
+	newsJSON, _ := json.Marshal(new)
+	w.Write(newsJSON)
+
+}
+
 func getAllNews(w http.ResponseWriter, r *http.Request) {
 	queryStmt, err := db.Prepare(`SELECT
 									codNoticia,
@@ -102,8 +174,11 @@ func getAllNews(w http.ResponseWriter, r *http.Request) {
 									partido
 								FROM v_todasnoticias`)
 	if err != nil {
-		log.Fatal(err)
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Wrong Statement"))
 	}
+	defer queryStmt.Close()
+
 	var news []AllNews
 	rows, err := queryStmt.Query()
 	defer rows.Close()
@@ -125,8 +200,8 @@ func getAllNews(w http.ResponseWriter, r *http.Request) {
 		news = append(news, new)
 	}
 	newsJSON, _ := json.Marshal(news)
-	fmt.Println(string(newsJSON))
 	w.Write(newsJSON)
+
 }
 
 type FakeNews struct {
