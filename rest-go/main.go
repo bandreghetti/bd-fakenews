@@ -386,7 +386,7 @@ func createMedia(db *sql.DB, media Media) (string, error) {
 	if media.Link != "" {
 		createMediaForPub = fmt.Sprintf("INSERT INTO t_midia(md5, arquivo, fotoVideo, linkPublicacao) VALUES ('%s', '%s', %t, '%s') RETURNING md5", media.MD5, string(media.File[:]), media.IsVideo, media.Link)
 	} else {
-		createMediaForPub = fmt.Sprintf("INSERT INTO t_midia(md5, arquivo, fotoVideo, linkPublicacao) VALUES ('%s', '%s', %t, %d) RETURNING md5", media.MD5, string(media.File[:]), media.IsVideo, media.CodNoticia)
+		createMediaForPub = fmt.Sprintf("INSERT INTO t_midia(md5, arquivo, fotoVideo, codNoticia) VALUES ('%s', '%s', %t, %d) RETURNING md5", media.MD5, string(media.File[:]), media.IsVideo, media.CodNoticia)
 	}
 	err := db.QueryRow(createMediaForPub).Scan(&newMedia)
 	if err != nil {
