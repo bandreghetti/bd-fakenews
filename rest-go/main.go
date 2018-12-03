@@ -84,7 +84,9 @@ func main() {
 	}
 
 	r := mux.NewRouter()
-	// r.HandleFunc("/", handler which will serve the static page)
+	// uncomment this to serve a "static" folder with the front-end on root
+	// fs := http.FileServer(http.Dir("static"))
+	// r.Handle("/", fs)
 	r.HandleFunc("/submit", createNews).Methods("POST")
 	r.HandleFunc("/allnews", getAllNews).Methods("GET")
 	r.HandleFunc("/new/{id}", getNew).Methods("GET")
