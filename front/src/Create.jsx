@@ -99,6 +99,7 @@ class CreateFakeNews extends React.Component {
       body: this.state.body,
       submittedBy: this.state.email
     };
+    submitJSON.candidates = [this.state.candidate];
     submitJSON.publi = {
       link: this.state.link,
       author: this.state.author,

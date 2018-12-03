@@ -275,11 +275,11 @@ func getAllNews(w http.ResponseWriter, r *http.Request) {
 }
 
 type FakeNews struct {
-	User       User     `json:user`
-	New        New      `json:new`
-	Publi      Publi    `json:publi`
-	Media      []Media  `json:media`
-	Candidates []string `json:candidates`
+	User       User     `json:"user"`
+	New        New      `json:"new"`
+	Publi      Publi    `json:"publi"`
+	Media      []Media  `json:"media"`
+	Candidates []string `json:"candidates"`
 }
 
 func createNews(w http.ResponseWriter, r *http.Request) {
@@ -435,6 +435,7 @@ func createMedia(db *sql.DB, media Media) (string, error) {
 }
 
 func createCandidateNewRelation(db *sql.DB, candiNew CandidateNew) error {
+	fmt.Println(candiNew)
 	createRelation := fmt.Sprintf("INSERT INTO r_candidato_noticia(cpfCandidato, codNoticia) VALUES ('%s', '%d')", candiNew.CPF, candiNew.CodNoticia)
 	err := db.QueryRow(createRelation).Scan(nil)
 	if err != nil {
