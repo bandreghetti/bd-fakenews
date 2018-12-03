@@ -1,4 +1,4 @@
-DROP VIEW v_todasnoticias, v_noticia_midia;
+DROP VIEW v_todasnoticias, v_noticia_midia IF EXISTS;
 CREATE VIEW v_todasnoticias AS
     SELECT t_noticia.codigo as codNoticia,
 		   manchete,
@@ -43,4 +43,3 @@ SELECT
 			t_midia.linkpublicacao = t_publicacao.link
 			OR t_midia.codnoticia = t_noticia.codigo
 		);
-
