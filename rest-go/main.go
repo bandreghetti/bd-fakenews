@@ -16,6 +16,18 @@ import (
 	_ "github.com/lib/pq"
 )
 
+type AllNews struct {
+	CodNoticia   int    `json:"cod"`
+	Manchete     string `json:"headline"`
+	Submetidapor string `json:"submittedBy"`
+	Cpf          string `json:"cpf"`
+	Nome         string `json:"name"`
+	Concorreem   string `json:"local"`
+	Cargo        string `json:"role"`
+	Coligacao    string `json:"coligation"`
+	Partido      string `json:"party"`
+}
+
 type User struct {
 	Name  string `json:name`
 	Email string `json:email`
@@ -60,6 +72,7 @@ func main() {
 	r := mux.NewRouter()
 	// r.HandleFunc("/", handler which will serve the static page)
 	r.HandleFunc("/submit", createNews).Methods("POST")
+	r.HandleFunc("/allnews", getAllNews).Methods("GET")
 
 	corsConf := handlers.CORS(
 		handlers.AllowedMethods([]string{"GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD"}),
@@ -74,6 +87,46 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getAllNews(w http.ResponseWriter, r *http.Request) {
+	queryStmt, err := db.Prepare(`SELECT
+									codNoticia,
+									manchete,
+									submetidapor,
+									cpf,
+									nome,
+									concorreem,
+									cargo,
+									coligacao,
+									partido
+								FROM v_todasnoticias`)
+	if err != nil {
+		log.Fatal(err)
+	}
+	var news []AllNews
+	rows, err := queryStmt.Query()
+	defer rows.Close()
+	for rows.Next() {
+		var new AllNews
+		if err := rows.Scan(
+			&new.CodNoticia,
+			&new.Manchete,
+			&new.Submetidapor,
+			&new.Cpf,
+			&new.Nome,
+			&new.Concorreem,
+			&new.Cargo,
+			&new.Coligacao,
+			&new.Partido); err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Could not get row"))
+		}
+		news = append(news, new)
+	}
+	newsJSON, _ := json.Marshal(news)
+	fmt.Println(string(newsJSON))
+	w.Write(newsJSON)
 }
 
 type FakeNews struct {
