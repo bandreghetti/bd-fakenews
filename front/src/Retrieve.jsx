@@ -1,5 +1,7 @@
 import React from 'react';
-import { withStyles, Paper, TableHead, Table, TableRow, TableCell, TableBody } from '@material-ui/core';
+import { withStyles, Paper, TableHead, Table, TableRow, TableCell, TableBody, IconButton, Grid } from '@material-ui/core';
+import DeleteIcon from '@material-ui/icons/Delete';
+import AddIcon from '@material-ui/icons/Add';
 import db_api from './Common/axiosOrderers';
 
 const styles = ({
@@ -25,9 +27,15 @@ class Retrieve extends React.Component {
     getNews = () => {
       db_api.get('/allnews')
         .then((response) => {
-          console.log(response.data)
-          this.setState({ news: response.data})})
+          if(response.data){
+            this.setState({ news: response.data})
+          }
+        })
         .catch((err) => console.log(err));
+    }
+
+    delete = (news) => {
+      db_api.delete(`/new/${news}`)
     }
     render () {
         const { classes } = this.props
@@ -49,6 +57,7 @@ class Retrieve extends React.Component {
                 <TableCell>Cargo</TableCell>
                 <TableCell>Partido</TableCell>
                 <TableCell>Coligacao</TableCell>
+                <TableCell> </TableCell>
               </TableRow>
             </TableHead>
             <TableBody>
@@ -66,6 +75,20 @@ class Retrieve extends React.Component {
                     <TableCell>{row.role}</TableCell>
                     <TableCell>{row.party}</TableCell>
                     <TableCell>{row.coligation}</TableCell>
+                    <TableCell>
+                      <Grid container style={{display: 'flex', justifyContent: 'flex-start' }}>
+                        <Grid item xs={6}>
+                          <IconButton aria-label="add">
+                            <AddIcon fontSize="small" />
+                          </IconButton>
+                        </Grid>
+                        <Grid item xs={6}>
+                          <IconButton aria-label="Delete" onClick={() => this.delete(row.cod)}>
+                            <DeleteIcon fontSize="small" />
+                          </IconButton>
+                        </Grid>
+                      </Grid>
+                    </TableCell>
                   </TableRow>
                 );
               })}
