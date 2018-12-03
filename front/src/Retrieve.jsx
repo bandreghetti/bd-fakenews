@@ -1,6 +1,6 @@
 import React from 'react';
 import { withStyles, Paper, TableHead, Table, TableRow, TableCell, TableBody } from '@material-ui/core';
-
+import db_api from './Common/axiosOrderers';
 
 const styles = ({
     root: {
@@ -14,22 +14,22 @@ const styles = ({
         color: 'white',
     },
 })
-let id = 0;
-function createData(name, calories, fat, carbs, protein) {
-  id += 1;
-  return { id, name, calories, fat, carbs, protein };
-}
 
-const rows = [
-  createData('Frozen yoghurt', 159, 6.0, 24, 4.0),
-  createData('Ice cream sandwich', 237, 9.0, 37, 4.3),
-  createData('Eclair', 262, 16.0, 24, 6.0),
-  createData('Cupcake', 305, 3.7, 67, 4.3),
-  createData('Gingerbread', 356, 16.0, 49, 3.9),
-];
 class Retrieve extends React.Component {
+    state = {
+      news: []
+    }
+    componentWillMount () {
+      this.getNews();
+    }
+    getNews = () => {
+      db_api.get('/allnews')
+        .then(response => {this.setState({ news: response.data})})
+        .catch(err => console.log(err));
+    }
     render () {
         const { classes } = this.props
+        const { news } = this.state;
         return (
           <div className={classes.root}>
             <Paper>
@@ -48,16 +48,20 @@ class Retrieve extends React.Component {
               </TableRow>
             </TableHead>
             <TableBody>
-              {rows.map(row => {
+              {news.map(row => {
                 return (
-                  <TableRow key={row.id}>
-                    <TableCell component="th" scope="row">
-                      {row.name}
+                  <TableRow key={row.cod}>
+                    <TableCell>
+                      {row.cod}
                     </TableCell>
-                    <TableCell numeric>{row.calories}</TableCell>
-                    <TableCell numeric>{row.fat}</TableCell>
-                    <TableCell numeric>{row.carbs}</TableCell>
-                    <TableCell numeric>{row.protein}</TableCell>
+                    <TableCell>{row.headline}</TableCell>
+                    <TableCell>{row.submittedBy}</TableCell>
+                    <TableCell>{row.cpf}</TableCell>
+                    <TableCell>{row.name}</TableCell>
+                    <TableCell>{row.local}</TableCell>
+                    <TableCell>{row.role}</TableCell>
+                    <TableCell>{row.party}</TableCell>
+                    <TableCell>{row.coligation}</TableCell>
                   </TableRow>
                 );
               })}

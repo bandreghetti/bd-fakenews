@@ -16,15 +16,15 @@ import (
 )
 
 type AllNews struct {
-	codNoticia   int    `json:cod`
-	manchete     string `json:headline`
-	submetidapor string `json:submittedBy`
-	cpf          string `json:cpf`
-	nome         string `json:name`
-	concorreem   string `json:local`
-	cargo        string `json:role`
-	coligacao    string `json:coligation`
-	partido      string `json:party`
+	CodNoticia   int    `json:"cod"`
+	Manchete     string `json:"headline"`
+	Submetidapor string `json:"submittedBy"`
+	Cpf          string `json:"cpf"`
+	Nome         string `json:"name"`
+	Concorreem   string `json:"local"`
+	Cargo        string `json:"role"`
+	Coligacao    string `json:"coligation"`
+	Partido      string `json:"party"`
 }
 
 type User struct {
@@ -71,7 +71,7 @@ func main() {
 	r := mux.NewRouter()
 	// r.HandleFunc("/", handler which will serve the static page)
 	r.HandleFunc("/submit", createNews).Methods("POST")
-	r.HandleFunc("/AllNews", getAllNews).Methods("GET")
+	r.HandleFunc("/allnews", getAllNews).Methods("GET")
 
 	corsConf := handlers.CORS(
 		handlers.AllowedMethods([]string{"GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD"}),
@@ -109,15 +109,15 @@ func getAllNews(w http.ResponseWriter, r *http.Request) {
 	for rows.Next() {
 		var new AllNews
 		if err := rows.Scan(
-			&new.codNoticia,
-			&new.manchete,
-			&new.submetidapor,
-			&new.cpf,
-			&new.nome,
-			&new.concorreem,
-			&new.cargo,
-			&new.coligacao,
-			&new.partido); err != nil {
+			&new.CodNoticia,
+			&new.Manchete,
+			&new.Submetidapor,
+			&new.Cpf,
+			&new.Nome,
+			&new.Concorreem,
+			&new.Cargo,
+			&new.Coligacao,
+			&new.Partido); err != nil {
 			w.WriteHeader(http.StatusInternalServerError)
 			w.Write([]byte("Could not get row"))
 		}
