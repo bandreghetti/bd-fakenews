@@ -19,7 +19,7 @@ CREATE VIEW v_todasnoticias AS
          r_partido_coligacao
 	WHERE r_candidato_noticia.cpfCandidato = t_candidato.cpf
 	  AND r_candidato_noticia.codNoticia = t_noticia.codigo
-	  AND t_cargo.codigo = codcargo
+	  AND t_cargo.codigo = t_candidato.codCargo
       AND r_partido_coligacao.siglaPartido = t_candidato.siglaPartido
       AND r_partido_coligacao.codColigacao = t_coligacao.codigo;
 
