@@ -109,10 +109,13 @@ class CreateFakeNews extends React.Component {
 
       const media = Object.keys(this.state.files).map(key => {
         return this.getBase64(this.state.files[key]).then(base64 => {
+          const format = base64.split(',')[0];
+          base64 = base64.split(',')[1];
           return {
             isVideo: false,
             link: this.state.link,
-            file: base64
+            file: base64,
+            format
           }
         });
       }
