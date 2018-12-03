@@ -63,6 +63,7 @@ type Publi struct {
 type Media struct {
 	MD5        string `json:"md5"`
 	File       []byte `json:"file"`
+	Format     string `json:"format"`
 	IsVideo    bool   `json:"isVideo"`
 	Link       string `json:"link"`
 	CodNoticia int    `json:"codNoticia"`
@@ -90,13 +91,14 @@ func main() {
 
 	r := mux.NewRouter()
 	// uncomment this to serve a "static" folder with the front-end on root
-	// fs := http.FileServer(http.Dir("static"))
+	// fs := http.FileServer(http.Dir("./static"))
 	// r.Handle("/", fs)
 	r.HandleFunc("/submit", createNews).Methods("POST")
 	r.HandleFunc("/allnews", getAllNews).Methods("GET")
 	r.HandleFunc("/new/{id}", deleteNews).Methods("DELETE")
 	r.HandleFunc("/new/{id}", getNew).Methods("GET")
 	r.HandleFunc("/getVehicles", getVehicles).Methods("GET")
+	r.HandleFunc("/addPubli", appendPubli).Methods("POST")
 
 	corsConf := handlers.CORS(
 		handlers.AllowedMethods([]string{"GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD"}),
@@ -346,6 +348,36 @@ func createNews(w http.ResponseWriter, r *http.Request) {
 			return
 		}
 	}
+	w.WriteHeader(http.StatusOK)
+}
+
+func appendPubli(w http.ResponseWriter, r *http.Request) {
+	// Get the request body
+	value, err := ioutil.ReadAll(r.Body)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("{\"error\":\"couldn't read request body\"}"))
+		return
+	}
+
+	var publi Publi
+
+	// Unmarshal the JSON
+	err = json.Unmarshal([]byte(value), &publi)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("{\"error\":\"invalid JSON format\"}"))
+		return
+	}
+
+	_, err = createPubli(db, publi)
+	if err != nil {
+		errMsg := fmt.Sprintf("error adding publication: %s", err.Error())
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte(errMsg))
+		return
+	}
+
 	w.WriteHeader(http.StatusOK)
 }
 

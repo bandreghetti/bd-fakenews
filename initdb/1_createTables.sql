@@ -69,6 +69,7 @@ CREATE TABLE r_candidato_noticia (
 
 CREATE TABLE t_midia (
     md5             BYTEA PRIMARY KEY,
+    formato         TEXT,
     arquivo         BYTEA,
     fotoVideo       BOOLEAN,
     linkPublicacao  VARCHAR(100) REFERENCES t_publicacao(link),
