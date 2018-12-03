@@ -29,43 +29,43 @@ type AllNews struct {
 }
 
 type GetNew struct {
-	Cod          int    `json:"cod`
+	Cod          int    `json:"cod"`
 	Manchete     string `json:"headline"`
 	Corpo        string `json:"body"`
 	Submetidapor string `json:"submittedby"`
 	Link         string `json:"link"`
 	Autor        string `json:"author"`
 	Veiculo      string `json:"vehicle"`
-	FotoVideo    bool   `json:isFoto`
+	FotoVideo    bool   `json:"isFoto"`
 	File         []byte `json:"file"`
 	MidiaCod     int    `json:"mediaCod"`
 	MidiaLink    string `json:"mediaLink"`
 }
 
 type User struct {
-	Name  string `json:name`
-	Email string `json:email`
+	Name  string `json:"name"`
+	Email string `json:"email"`
 }
 
 type New struct {
-	Headline    string `json:headline`
-	Body        string `json:body`
-	SubmittedBy string `json:submittedBy`
+	Headline    string `json:"headline"`
+	Body        string `json:"body"`
+	SubmittedBy string `json:"submittedBy"`
 }
 
 type Publi struct {
-	Link       string `json:link`
-	Author     string `json:author`
-	CodVeiculo int    `json:codVeiculo`
-	CodNoticia int    `json:codNoticia`
+	Link       string `json:"link"`
+	Author     string `json:"author"`
+	CodVeiculo int    `json:"codVeiculo"`
+	CodNoticia int    `json:"codNoticia"`
 }
 
 type Media struct {
-	MD5        string `json:md5`
-	File       []byte `json:file`
-	IsVideo    bool   `json:isVideo`
-	Link       string `json:link`
-	CodNoticia int    `json:codNoticia`
+	MD5        string `json:"md5"`
+	File       []byte `json:"file"`
+	IsVideo    bool   `json:"isVideo"`
+	Link       string `json:"link"`
+	CodNoticia int    `json:"codNoticia"`
 }
 
 type CandidateNew struct {
@@ -74,8 +74,8 @@ type CandidateNew struct {
 }
 
 type Vehicle struct {
-	Label string `json:label`
-	Value int    `json:value`
+	Label string `json:"label"`
+	Value int    `json:"value"`
 }
 
 var db *(sql.DB)
