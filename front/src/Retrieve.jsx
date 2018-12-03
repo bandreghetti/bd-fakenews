@@ -24,8 +24,10 @@ class Retrieve extends React.Component {
     }
     getNews = () => {
       db_api.get('/allnews')
-        .then(response => {this.setState({ news: response.data})})
-        .catch(err => console.log(err));
+        .then((response) => {
+          console.log(response.data)
+          this.setState({ news: response.data})})
+        .catch((err) => console.log(err));
     }
     render () {
         const { classes } = this.props
@@ -53,7 +55,7 @@ class Retrieve extends React.Component {
               {news.map(row => {
                 return (
                   <TableRow key={row.cod}>
-                    <TableCell>
+                    <TableCell component="a" href={`/new/${row.cod}`}>
                       {row.cod}
                     </TableCell>
                     <TableCell>{row.headline}</TableCell>
