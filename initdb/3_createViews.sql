@@ -13,7 +13,7 @@ CREATE VIEW v_todasnoticias AS
 	FROM t_noticia,
          t_candidato,
          r_candidato_noticia,
-         t_cargo,
+         t_cargo
 	WHERE r_candidato_noticia.cpfCandidato = t_candidato.cpf
 	  AND r_candidato_noticia.codNoticia = t_noticia.codigo
 	  AND t_cargo.codigo = t_candidato.codCargo
