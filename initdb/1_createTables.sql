@@ -49,7 +49,7 @@ CREATE TABLE t_publicacao (
     link        VARCHAR(100) PRIMARY KEY,
     autor       VARCHAR(50),
     codVeiculo  INTEGER REFERENCES t_veiculo(codigo),
-    codNoticia  INTEGER REFERENCES t_noticia(codigo)
+    codNoticia  INTEGER REFERENCES t_noticia(codigo) ON DELETE CASCADE
 );
 
 CREATE TABLE t_candidato (
@@ -63,7 +63,7 @@ CREATE TABLE t_candidato (
 
 CREATE TABLE r_candidato_noticia (
     cpfCandidato    CHAR(11) REFERENCES t_candidato(cpf),
-    codNoticia      INTEGER REFERENCES t_noticia(codigo),
+    codNoticia      INTEGER REFERENCES t_noticia(codigo) ON DELETE CASCADE,
     PRIMARY KEY (cpfCandidato, codNoticia)
 );
 
@@ -72,5 +72,5 @@ CREATE TABLE t_midia (
     arquivo         BYTEA,
     fotoVideo       BOOLEAN,
     linkPublicacao  VARCHAR(100) REFERENCES t_publicacao(link),
-    codNoticia      INTEGER REFERENCES t_noticia(codigo)
+    codNoticia      INTEGER REFERENCES t_noticia(codigo) ON DELETE CASCADE
 );
