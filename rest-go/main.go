@@ -94,6 +94,7 @@ func main() {
 	// r.Handle("/", fs)
 	r.HandleFunc("/submit", createNews).Methods("POST")
 	r.HandleFunc("/allnews", getAllNews).Methods("GET")
+	r.HandleFunc("/new/{id}", deleteNews).Methods("DELETE")
 	r.HandleFunc("/new/{id}", getNew).Methods("GET")
 	r.HandleFunc("/getVehicles", getVehicles).Methods("GET")
 
@@ -110,6 +111,29 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func deleteNews(w http.ResponseWriter, r *http.Request) {
+	v := mux.Vars(r)
+	id, ok := v["id"]
+	if !ok {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Missing ID"))
+		return
+	}
+	deleteCommand := fmt.Sprintf("DELETE FROM t_noticia WHERE codigo = %s", id)
+	err := db.QueryRow(deleteCommand).Scan(nil)
+	if err != nil {
+		switch err {
+		case sql.ErrNoRows:
+			w.WriteHeader(http.StatusOK)
+		default:
+			w.WriteHeader(http.StatusInternalServerError)
+			errMsg := fmt.Sprintf("error deleting news: %s", err.Error())
+			w.Write([]byte(errMsg))
+		}
+	}
+	w.WriteHeader(http.StatusOK)
 }
 
 func getVehicles(w http.ResponseWriter, r *http.Request) {
