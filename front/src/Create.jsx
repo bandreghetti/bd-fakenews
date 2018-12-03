@@ -117,11 +117,9 @@ class CreateFakeNews extends React.Component {
       }
       );
       Promise.all(media).then(medias => {
-        submitJSON.media = {
-          medias
-        }
-        console.log(submitJSON)
-        db_api.post('/submit', submitJSON).catch(err => {console.log(err)})
+        submitJSON.media = medias;
+        console.log(submitJSON);
+        db_api.post('/submit', submitJSON).catch(err => {console.log(err)});
       });
     }
   };
