@@ -29,6 +29,8 @@ class Retrieve extends React.Component {
         .then((response) => {
             if(response.data){
             this.setState({ news: response.data})
+          } else {
+            this.setState({ news: [] })
           }
         })
         .catch((err) => console.log(err));
@@ -36,6 +38,7 @@ class Retrieve extends React.Component {
 
     delete = (news) => {
       db_api.delete(`/new/${news}`)
+      this.getNews();
     }
     render () {
         const { classes } = this.props
