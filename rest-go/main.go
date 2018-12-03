@@ -73,6 +73,11 @@ type CandidateNew struct {
 	CodNoticia int
 }
 
+type Vehicle struct {
+	Label string `json:label`
+	Value int    `json:value`
+}
+
 var db *(sql.DB)
 var err error
 
@@ -90,6 +95,7 @@ func main() {
 	r.HandleFunc("/submit", createNews).Methods("POST")
 	r.HandleFunc("/allnews", getAllNews).Methods("GET")
 	r.HandleFunc("/new/{id}", getNew).Methods("GET")
+	r.HandleFunc("/getVehicles", getVehicles).Methods("GET")
 
 	corsConf := handlers.CORS(
 		handlers.AllowedMethods([]string{"GET", "PUT", "POST", "DELETE", "OPTIONS", "HEAD"}),
@@ -104,6 +110,40 @@ func main() {
 	if err != nil {
 		log.Fatal(err)
 	}
+}
+
+func getVehicles(w http.ResponseWriter, r *http.Request) {
+	queryStmt, err := db.Prepare(`SELECT nome, codigo FROM t_veiculo`)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Wrong Statement"))
+	}
+	defer queryStmt.Close()
+
+	rows, err := queryStmt.Query()
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Could not query rows"))
+	}
+	defer rows.Close()
+
+	var vehicles []Vehicle
+	for rows.Next() {
+		var vehicle Vehicle
+		err = rows.Scan(&vehicle.Label, &vehicle.Value)
+		if err != nil {
+			w.WriteHeader(http.StatusInternalServerError)
+			w.Write([]byte("Error iterating through query response"))
+		}
+		vehicles = append(vehicles, vehicle)
+	}
+	vehicleJSON, err := json.Marshal(vehicles)
+	if err != nil {
+		w.WriteHeader(http.StatusInternalServerError)
+		w.Write([]byte("Error marshaling response JSON"))
+	}
+	w.WriteHeader(http.StatusOK)
+	w.Write(vehicleJSON)
 }
 
 func getNew(w http.ResponseWriter, r *http.Request) {
